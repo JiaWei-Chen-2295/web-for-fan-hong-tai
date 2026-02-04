@@ -2,8 +2,13 @@
 @config "./tailwind.config.js";
 
 @layer base {
-    body {
+
+    body,
+    html {
         @apply bg-[#1e1b4b] overscroll-none;
+        font-family: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
     }
 }
 
