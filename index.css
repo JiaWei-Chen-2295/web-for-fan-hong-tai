@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@config "./tailwind.config.js";
+
+@layer base {
+    body {
+        @apply bg-[#1e1b4b] overscroll-none;
+    }
+}
+
+@layer utilities {
+
+    /* Custom scrollbar hiding */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
