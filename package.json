@@ -9,6 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/be-vietnam-pro": "^5.2.8",
+    "@fontsource/ma-shan-zheng": "^5.2.8",
+    "@fontsource/noto-serif-sc": "^5.2.8",
+    "@fontsource/plus-jakarta-sans": "^5.2.8",
+    "@fontsource/zhi-mang-xing": "^5.2.8",
     "canvas-confetti": "^1.9.4",
     "framer-motion": "^12.31.0",
     "lucide-react": "^0.563.0",
