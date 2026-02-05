@@ -21,14 +21,14 @@ export const SceneGift: React.FC<TransitionProps> = ({ onNext, onReplay }) => {
                 angle: 60,
                 spread: 55,
                 origin: { x: 0 },
-                colors: ['#fbbf24', '#f97316', '#ffffff']
+                colors: ['#6BA3D6', '#9B8EC6', '#E8C48A', '#ffffff', '#E8B4A8']
             });
             confetti({
                 particleCount: 5,
                 angle: 120,
                 spread: 55,
                 origin: { x: 1 },
-                colors: ['#fbbf24', '#f97316', '#ffffff']
+                colors: ['#6BA3D6', '#9B8EC6', '#E8C48A', '#ffffff', '#D4A4A4']
             });
 
             if (Date.now() < end) {
@@ -39,9 +39,10 @@ export const SceneGift: React.FC<TransitionProps> = ({ onNext, onReplay }) => {
     };
 
     return (
-        <div className="relative w-full h-full bg-[#2a1b3d] flex flex-col items-center justify-center p-6 overflow-hidden">
-            {/* Spotlight from top */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-gradient-to-b from-sunset-gold/20 to-transparent blur-3xl pointer-events-none"></div>
+        <div className="relative w-full h-full bg-sky-twilight flex flex-col items-center justify-center p-6 overflow-hidden">
+            {/* Dual color spotlight - blue + gold */}
+            <div className="absolute top-0 left-1/4 -translate-x-1/2 w-[300px] h-1/2 bg-gradient-to-b from-mayday-blue/20 to-transparent blur-3xl pointer-events-none"></div>
+            <div className="absolute top-0 right-1/4 translate-x-1/2 w-[300px] h-1/2 bg-gradient-to-b from-honey-glow/15 to-transparent blur-3xl pointer-events-none"></div>
 
             <AnimatePresence mode="wait">
                 {!isOpen ? (
@@ -56,11 +57,20 @@ export const SceneGift: React.FC<TransitionProps> = ({ onNext, onReplay }) => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        {/* Gift Box */}
+                        {/* Gift Box with Heartbeat Pulse */}
                         <motion.div
-                            animate={{ rotate: [0, -2, 2, -1, 1, 0] }}
-                            transition={{ repeat: Infinity, repeatDelay: 2, duration: 0.5 }}
-                            className="w-48 h-48 bg-gradient-to-br from-[#1e1b4b] to-[#312e81] rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center justify-center relative z-10 border border-white/10"
+                            // Heartbeat animation: rapid pulse then pause
+                            animate={{
+                                scale: [1, 1.05, 1, 1.05, 1],
+                                rotate: [0, -1, 1, -1, 0]
+                            }}
+                            transition={{
+                                duration: 1.5,
+                                repeat: Infinity,
+                                repeatDelay: 1, // Pause between beats
+                                ease: "easeInOut"
+                            }}
+                            className="w-48 h-48 bg-gradient-to-br from-deep-mayday to-mayday-blue rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center justify-center relative z-10 border border-white/10"
                         >
                             {/* Ribbon */}
                             <div className="absolute inset-0 flex items-center justify-center">
@@ -68,7 +78,7 @@ export const SceneGift: React.FC<TransitionProps> = ({ onNext, onReplay }) => {
                                 <div className="h-6 w-full bg-white/10 absolute shadow-sm backdrop-blur-sm"></div>
                             </div>
                             {/* Lid */}
-                            <div className="absolute top-0 w-52 h-12 bg-[#312e81] rounded-sm -mt-2 shadow-lg border-b border-white/5"></div>
+                            <div className="absolute top-0 w-52 h-12 bg-deep-mayday rounded-sm -mt-2 shadow-lg border-b border-white/5"></div>
                             <Gift className="w-16 h-16 text-white/80 z-20 opacity-80" />
                         </motion.div>
 
@@ -90,7 +100,7 @@ export const SceneGift: React.FC<TransitionProps> = ({ onNext, onReplay }) => {
                             transition={{ delay: 0.5 }}
                             className="mb-8 flex justify-center"
                         >
-                            <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-sunset-gold to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
+                            <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-mayday-blue to-honey-glow flex items-center justify-center shadow-lg shadow-mayday-blue/30">
                                 <Sparkles className="w-10 h-10 text-white fill-white" />
                             </div>
                         </motion.div>
@@ -105,16 +115,18 @@ export const SceneGift: React.FC<TransitionProps> = ({ onNext, onReplay }) => {
                             </p>
                         </div>
 
-                        <p className="text-sunset-peach font-handwritten text-xl tracking-wide">
+                        <p className="text-blush-coral font-handwritten text-xl tracking-wide">
                             谢谢你出现在我的生命里
                         </p>
 
-                        <button
+                        <motion.button
                             onClick={onReplay}
-                            className="mt-12 text-white/30 text-xs hover:text-white transition-colors uppercase tracking-widest"
+                            whileHover={{ scale: 1.05, color: '#ffffff' }}
+                            whileTap={{ scale: 0.95 }}
+                            className="mt-12 text-white/30 text-xs transition-colors uppercase tracking-widest"
                         >
                             再次回到那一天
-                        </button>
+                        </motion.button>
                     </motion.div>
                 )}
             </AnimatePresence>

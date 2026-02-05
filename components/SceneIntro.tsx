@@ -16,12 +16,12 @@ export const SceneIntro: React.FC<TransitionProps> = ({ onNext, isActive }) => {
           className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1514525253440-b39345208668?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center grayscale-[0.2] sepia-[0.3]"
         />
 
-        {/* Colorful Gradient Glows - Using normal blend mode for guaranteed visibility */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#4c1d95]/30 via-transparent to-black" />
+        {/* Colorful Gradient Glows - Mayday Blue + Warm tones */}
+        <div className="absolute inset-0 bg-gradient-to-b from-deep-mayday/40 via-transparent to-black" />
         <motion.div
           animate={{ opacity: [0.2, 0.4, 0.2] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute inset-0 bg-gradient-conic from-sunset-orange/10 via-transparent to-transparent blur-3xl"
+          className="absolute inset-0 bg-gradient-conic from-mayday-blue/15 via-honey-glow/10 to-transparent blur-3xl"
         />
       </div>
 
@@ -61,7 +61,7 @@ export const SceneIntro: React.FC<TransitionProps> = ({ onNext, isActive }) => {
               style={{ backgroundImage: "url('https://images.unsplash.com/photo-1514525253440-b39345208668?q=80&w=2070&auto=format&fit=crop')" }}>
               <div className="absolute inset-0 bg-gradient-to-t from-[#fff9f0] to-transparent"></div>
               <div className="absolute bottom-4 left-4">
-                <span className="bg-dusk-purple/80 text-white text-[9px] px-2 py-1 rounded backdrop-blur-sm tracking-widest uppercase shadow-lg">Limited Edition</span>
+                <span className="bg-deep-mayday/90 text-white text-[9px] px-2 py-1 rounded backdrop-blur-sm tracking-widest uppercase shadow-lg">Limited Edition</span>
               </div>
             </div>
 
@@ -75,20 +75,20 @@ export const SceneIntro: React.FC<TransitionProps> = ({ onNext, isActive }) => {
 
               <motion.h2
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
-                className="font-display font-bold uppercase tracking-widest text-sunset-orange text-xs mb-2"
+                className="font-display font-bold uppercase tracking-widest text-mayday-blue text-xs mb-2"
               >
                 Happy Birthday, Franklin
               </motion.h2>
               <motion.h1
                 initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.2 }}
-                className="font-brush text-4xl text-dusk-dark leading-tight mt-1 mb-4"
+                className="font-brush text-4xl text-deep-mayday leading-tight mt-1 mb-4"
               >
                 生日快乐<br />我的好朋友，范部
               </motion.h1>
 
               <div className="flex flex-col gap-1 mb-6">
                 <p className="text-[10px] tracking-[0.2em] text-slate-500 uppercase font-bold">VIP ACCESS TICKET</p>
-                <p className="text-xs text-dusk-purple/70 italic font-medium">那些未完待续的歌，在这个黄昏重逢</p>
+                <p className="text-xs text-mayday-blue/70 italic font-medium">那些未完待续的歌，在这个黄昏重逢</p>
               </div>
 
               <div className="grid grid-cols-3 border-y border-slate-200 py-4 mb-2">
@@ -118,7 +118,7 @@ export const SceneIntro: React.FC<TransitionProps> = ({ onNext, isActive }) => {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.5, type: "spring", stiffness: 200 }}
-        className="relative z-20 w-full max-w-xs mt-8 bg-sunset-gold text-dusk-dark font-bold text-lg h-14 rounded-full flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(251,191,36,0.4)] border-b-4 border-amber-600 active:border-b-0 active:translate-y-1 transition-all"
+        className="relative z-20 w-full max-w-xs mt-8 bg-gradient-to-r from-mayday-blue via-lavender-mist to-honey-glow text-white font-bold text-lg h-14 rounded-full flex items-center justify-center gap-3 shadow-[0_0_25px_rgba(107,163,214,0.35)] border-b-4 border-deep-mayday active:border-b-0 active:translate-y-1 transition-all"
       >
         <span className="font-brush text-xl tracking-wider pt-1">让我们回到那一天</span>
         <Play className="w-5 h-5 fill-current" />

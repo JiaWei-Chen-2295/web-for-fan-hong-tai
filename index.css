@@ -5,7 +5,7 @@
 
     body,
     html {
-        @apply bg-[#1e1b4b] overscroll-none;
+        @apply bg-[#1e2a3a] overscroll-none;
         font-family: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;

@@ -57,15 +57,23 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     }, [isDone, onComplete]);
 
     return (
-        <div className="fixed inset-0 bg-[#0c0a09] z-[100] flex flex-col items-center justify-center text-white overflow-hidden">
-            {/* Background Decorative Element */}
+        <div className="fixed inset-0 bg-sky-twilight z-[100] flex flex-col items-center justify-center text-white overflow-hidden">
+            {/* Background Decorative Elements - Blue + Gold Glow */}
             <motion.div
                 animate={{
                     scale: [1, 1.2, 1],
-                    opacity: [0.3, 0.5, 0.3]
+                    opacity: [0.25, 0.45, 0.25]
                 }}
                 transition={{ duration: 4, repeat: Infinity }}
-                className="absolute w-[500px] h-[500px] bg-dusk-purple/20 rounded-full blur-[120px] pointer-events-none"
+                className="absolute w-[500px] h-[500px] bg-mayday-blue/25 rounded-full blur-[120px] pointer-events-none"
+            />
+            <motion.div
+                animate={{
+                    scale: [1.1, 1, 1.1],
+                    opacity: [0.2, 0.35, 0.2]
+                }}
+                transition={{ duration: 5, repeat: Infinity, delay: 1 }}
+                className="absolute w-[400px] h-[400px] bg-honey-glow/20 rounded-full blur-[100px] pointer-events-none translate-x-20 translate-y-10"
             />
 
             <div className="relative z-10 flex flex-col items-center">
@@ -74,7 +82,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
                     transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
                     className="mb-8 p-4 rounded-full border border-white/5 bg-white/5 backdrop-blur-sm"
                 >
-                    <Music className="w-8 h-8 text-sunset-gold" />
+                    <Music className="w-8 h-8 text-mayday-blue" />
                 </motion.div>
 
                 <h2 className="font-brush text-3xl mb-8 tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
@@ -86,7 +94,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
                     <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${progress}%` }}
-                        className="h-full bg-gradient-to-r from-sunset-orange via-sunset-gold to-sunset-orange shadow-[0_0_15px_rgba(251,191,36,0.5)]"
+                        className="h-full bg-gradient-to-r from-mayday-blue via-lavender-mist to-honey-glow shadow-[0_0_12px_rgba(107,163,214,0.4)]"
                     />
                 </div>
 
@@ -98,7 +106,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
                     <span className="text-[10px] font-mono tracking-tighter text-white/30 uppercase">
                         Collecting Memories
                     </span>
-                    <span className="text-[10px] font-mono text-sunset-gold font-bold">
+                    <span className="text-[10px] font-mono text-mayday-blue font-bold">
                         {progress}%
                     </span>
                 </motion.div>
