@@ -6,6 +6,7 @@ import { SceneTimeline } from './components/SceneTimeline';
 import { SceneLetter } from './components/SceneLetter';
 import { SceneGift } from './components/SceneGift';
 import { LoadingScreen } from './components/LoadingScreen';
+import { TestPage } from './components/TestPage';
 import { Scene } from './types';
 
 // Custom hook to handle audio background (optional placeholder)
@@ -14,6 +15,14 @@ const useConcertAudio = (scene: Scene) => {
 };
 
 export default function App() {
+  // Check for test mode via query param OR environment variable
+  const searchParams = new URLSearchParams(window.location.search);
+  const isTestMode = searchParams.get('test') === 'true' || import.meta.env.VITE_APP_MODE === 'test';
+
+  if (isTestMode) {
+    return <TestPage />;
+  }
+
   const [currentScene, setCurrentScene] = useState<Scene>(Scene.Intro);
   const [direction, setDirection] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
