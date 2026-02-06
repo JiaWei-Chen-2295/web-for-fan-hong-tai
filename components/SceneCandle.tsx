@@ -12,17 +12,22 @@ export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => 
     const containerRef = useRef<HTMLDivElement>(null);
 
     // Handle isActive prop - extinguish/re-light candle based on isActive
+    // Only react to isActive changes, NOT isBlown changes.
+    // Otherwise handleBlow setting isBlown=true triggers this effect,
+    // which resets isBlown=false (re-lighting the candle) while the
+    // setTimeout still fires showWishes — causing wishes to appear
+    // while the candle is still lit.
+    const prevActiveRef = useRef(isActive);
     useEffect(() => {
+        if (prevActiveRef.current === isActive) return;
+        prevActiveRef.current = isActive;
+
         if (!isActive && !isBlown) {
-            // Extinguish the candle when isActive becomes false
             setIsBlown(true);
             setTimeout(() => {
                 setShowWishes(true);
-                // Don't call onNext when extinguishing via isActive prop
-                // onNext is only for scene transitions
             }, 1000);
         } else if (isActive && isBlown) {
-            // Re-light the candle when isActive becomes true again
             setIsBlown(false);
             setShowWishes(false);
             setParticleCount(0);
