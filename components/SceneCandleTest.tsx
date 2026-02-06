@@ -1,11 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Wind } from 'lucide-react';
 import { TransitionProps } from '../types';
 
-export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => {
+export const SceneCandleTest: React.FC<TransitionProps> = ({ onNext, isActive }) => {
     const [isBlown, setIsBlown] = useState(false);
-    const [showWishes, setShowWishes] = useState(false);
     const [flameIntensity, setFlameIntensity] = useState(1);
     const [windDirection, setWindDirection] = useState(0);
     const [particleCount, setParticleCount] = useState(0);
@@ -17,14 +15,11 @@ export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => 
             // Extinguish the candle when isActive becomes false
             setIsBlown(true);
             setTimeout(() => {
-                setShowWishes(true);
-                // Don't call onNext when extinguishing via isActive prop
-                // onNext is only for scene transitions
+                // Don't show wishes text
             }, 1000);
         } else if (isActive && isBlown) {
             // Re-light the candle when isActive becomes true again
             setIsBlown(false);
-            setShowWishes(false);
             setParticleCount(0);
         }
     }, [isActive, isBlown]);
@@ -59,7 +54,6 @@ export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => 
         if (isBlown) return;
         setIsBlown(true);
         setTimeout(() => {
-            setShowWishes(true);
             setTimeout(onNext, 3000); // Give enough time to read
         }, 1000);
     };
@@ -67,44 +61,8 @@ export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => 
     return (
         <div
             ref={containerRef}
-            className="relative w-full h-full bg-[#050308] flex flex-col items-center justify-center overflow-hidden"
+            className="relative w-full h-full bg-transparent flex flex-col items-center justify-center"
         >
-            {/* 1. Global Ambiance / Lighting */}
-            {/* Enhanced global glow with multiple layers */}
-            {!isBlown && (
-                <>
-                    {/* Primary glow */}
-                    <motion.div
-                        animate={{
-                            opacity: [0.25, 0.35, 0.25, 0.35],
-                            scale: [1, 1.02, 0.98, 1]
-                        }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-orange-900/25 rounded-full blur-[120px] pointer-events-none"
-                    />
-                    {/* Secondary glow for depth */}
-                    <motion.div
-                        animate={{
-                            opacity: [0.15, 0.25, 0.15, 0.25],
-                            scale: [1.1, 1.15, 1.05, 1.1]
-                        }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-orange-800/15 rounded-full blur-[180px] pointer-events-none"
-                    />
-                    {/* Heat distortion effect */}
-                    <motion.div
-                        animate={{
-                            opacity: [0.05, 0.1, 0.05],
-                            y: [0, -5, 0]
-                        }}
-                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-white/5 rounded-full blur-[60px] pointer-events-none"
-                    />
-                </>
-            )}
-
-            {/* Vignette with enhanced depth */}
-            <div className="absolute inset-0 bg-gradient-radial from-transparent via-black/30 to-black/85 pointer-events-none" />
 
             {/* 2. The Candle Object */}
             <div
@@ -334,118 +292,10 @@ export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => 
                     </div>
                 </div>
 
-                {/* Interaction Hint - Enhanced with 3D effect */}
-                <AnimatePresence>
-                    {!isBlown && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 10, rotateX: -10 }}
-                            animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ delay: 1 }}
-                            className="mt-24 flex flex-col items-center gap-3 text-white/40 text-center"
-                            style={{ perspective: '500px' }}
-                        >
-                            <div className="relative">
-                                <motion.p
-                                    className="text-4xl font-brush text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-orange-400 drop-shadow-sm"
-                                    animate={{
-                                        textShadow: [
-                                            '0 0 20px rgba(255,200,100,0.3)',
-                                            '0 0 30px rgba(255,200,100,0.5)',
-                                            '0 0 20px rgba(255,200,100,0.3)'
-                                        ]
-                                    }}
-                                    transition={{ duration: 2, repeat: Infinity }}
-                                >
-                                    Happy Birthday
-                                </motion.p>
-                                <motion.div
-                                    animate={{
-                                        opacity: [0, 0.6, 0],
-                                        scale: [1, 1.1, 1]
-                                    }}
-                                    transition={{ duration: 2, repeat: Infinity }}
-                                    className="absolute inset-0 bg-gradient-to-r from-amber-200 to-orange-400 blur-xl opacity-40"
-                                />
-                            </div>
-
-                            <motion.div
-                                whileHover={{
-                                    scale: 1.05,
-                                    backgroundColor: "rgba(255,255,255,0.12)",
-                                    y: -2
-                                }}
-                                whileTap={{ scale: 0.95 }}
-                                className="flex items-center gap-3 px-6 py-3 bg-white/8 backdrop-blur-md border border-white/15 rounded-full transition-all shadow-[0_0_20px_rgba(0,0,0,0.3)]"
-                            >
-                                <Wind className="w-4 h-4 text-blue-300/90" />
-                                <span className="text-[11px] font-sans tracking-[0.25em] uppercase text-blue-100/80 font-medium">吹灭这个蜡烛吧</span>
-                            </motion.div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                {/* Interaction Hint - Enhanced with 3D effect - REMOVED FOR TEST */}
             </div>
 
-            {/* Wishes Text Overlay - Enhanced with 3D depth */}
-            <AnimatePresence>
-                {showWishes && (
-                    <motion.div
-                        className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-black/85 backdrop-blur-xl"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                    >
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9, filter: "blur(12px)", rotateX: 10 }}
-                            animate={{ opacity: 1, scale: 1, filter: "blur(0px)", rotateX: 0 }}
-                            transition={{ duration: 1.5, ease: "circOut" }}
-                            className="text-center p-10 relative"
-                            style={{ perspective: '800px', transformStyle: 'preserve-3d' }}
-                        >
-                            {/* Enhanced Background Glow behind text */}
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-blue-500/15 blur-3xl rounded-full"></div>
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-orange-400/10 blur-2xl rounded-full"></div>
-
-                            <motion.div
-                                initial={{ opacity: 0, y: 40, rotateX: 15 }}
-                                animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                                transition={{ duration: 1.2, delay: 0.4, ease: "easeOut" }}
-                                className="relative"
-                                style={{ transformStyle: 'preserve-3d' }}
-                            >
-                                <motion.h2
-                                    className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white/90 to-white/70 font-brush text-7xl mb-8 drop-shadow-[0_0_40px_rgba(255,255,255,0.4)]"
-                                    animate={{
-                                        textShadow: [
-                                            '0 0 30px rgba(255,255,255,0.3)',
-                                            '0 0 50px rgba(255,255,255,0.5)',
-                                            '0 0 30px rgba(255,255,255,0.3)'
-                                        ]
-                                    }}
-                                    transition={{ duration: 3, repeat: Infinity }}
-                                >
-                                    愿望会实现的
-                                </motion.h2>
-                            </motion.div>
-
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 1, delay: 1.5 }}
-                            >
-                                <div className="h-[2px] w-16 bg-gradient-to-r from-transparent via-white/40 to-transparent mx-auto mb-8"></div>
-                                <motion.p
-                                    className="text-white/60 font-serif text-base tracking-[0.4em] uppercase"
-                                    animate={{ opacity: [0.6, 1, 0.6] }}
-                                    transition={{ duration: 2, repeat: Infinity }}
-                                >
-                                    许个愿望吧 ✨
-                                </motion.p>
-                            </motion.div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {/* Wishes Text Overlay - REMOVED FOR TEST */}
         </div>
     );
 };
