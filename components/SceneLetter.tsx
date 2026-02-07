@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Quote, Music } from 'lucide-react';
+import { ArrowRight, Quote, Music, Heart, Star, Sparkles } from 'lucide-react';
 import { TransitionProps } from '../types';
 
 /**
@@ -393,7 +393,7 @@ export const SceneLetter: React.FC<TransitionProps> = ({ onNext }) => {
                         }}
                         transition={{ duration: 2, repeat: letterRisen ? Infinity : 0, ease: 'easeInOut' }}
                       >
-                        ♥
+                        <Heart className="w-8 h-8 fill-current mb-2" />
                       </motion.div>
                       <motion.span
                         className="text-[10px] tracking-[0.3em] uppercase font-serif"
@@ -576,9 +576,7 @@ export const SceneLetter: React.FC<TransitionProps> = ({ onNext }) => {
                       `,
                     }}
                   >
-                    <span className="text-red-200/80 text-2xl" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
-                      ♥
-                    </span>
+                    <Heart className="w-8 h-8 text-red-200/80 fill-current drop-shadow-sm" />
                     <div
                       className="absolute inset-0 rounded-full"
                       style={{
@@ -722,10 +720,10 @@ export const SceneLetter: React.FC<TransitionProps> = ({ onNext }) => {
 
             <motion.button
               onClick={onNext}
-              className="mt-8 flex items-center gap-2 text-white font-bold text-sm tracking-wide px-6 py-3 rounded-full transition-all"
+              className="mt-8 flex items-center gap-2 text-white font-bold text-sm tracking-wide px-8 py-3 rounded-full transition-all group"
               style={{
-                background: `linear-gradient(135deg, #6BA3D6, #9B8EC6, ${kraft.gold})`,
-                boxShadow: `0 10px 30px -10px rgba(107,163,214,0.4), 0 4px 12px ${kraft.gold}30`,
+                background: '#6BA3D6',
+                boxShadow: `0 10px 30px -10px rgba(232,196,138,0.5), 0 0 0 1px rgba(255,255,255,0.2) inset`,
               }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -755,29 +753,29 @@ export const SceneLetter: React.FC<TransitionProps> = ({ onNext }) => {
             <span className="mx-8 text-sm text-lavender-mist/40 font-serif italic tracking-wide">
               未来的你 会一帆风顺
             </span>
-            <span className="mx-8 text-xs text-mayday-blue/30">✦</span>
+            <span className="mx-8 text-sm text-mayday-blue/30"><Star className="w-3 h-3" /></span>
             <span className="mx-8 text-sm text-honey-glow/35 font-serif italic tracking-wide">
               如果你忘了我 就让风替代我 说出对你的感谢
             </span>
-            <span className="mx-8 text-xs text-blush-coral/30">♪</span>
+            <span className="mx-8 text-sm text-blush-coral/30"><Music className="w-3 h-3" /></span>
             <span className="mx-8 text-sm text-lavender-mist/40 font-serif italic tracking-wide">
               如果能有一天 再一次重返光荣 记得找我 我的好朋友
             </span>
-            <span className="mx-8 text-xs text-mayday-blue/30">✦</span>
+            <span className="mx-8 text-sm text-mayday-blue/30"><Sparkles className="w-3 h-3" /></span>
           </div>
           <div className="inline-flex animate-marquee" aria-hidden="true">
             <span className="mx-8 text-sm text-lavender-mist/40 font-serif italic tracking-wide">
               未来的你 会一帆风顺
             </span>
-            <span className="mx-8 text-xs text-mayday-blue/30">✦</span>
+            <span className="mx-8 text-sm text-mayday-blue/30"><Star className="w-3 h-3" /></span>
             <span className="mx-8 text-sm text-honey-glow/35 font-serif italic tracking-wide">
               如果你忘了我 就让风替代我 说出对你的感谢
             </span>
-            <span className="mx-8 text-xs text-blush-coral/30">♪</span>
+            <span className="mx-8 text-sm text-blush-coral/30"><Music className="w-3 h-3" /></span>
             <span className="mx-8 text-sm text-lavender-mist/40 font-serif italic tracking-wide">
               如果能有一天 再一次重返光荣 记得找我 我的好朋友
             </span>
-            <span className="mx-8 text-xs text-mayday-blue/30">✦</span>
+            <span className="mx-8 text-sm text-mayday-blue/30"><Sparkles className="w-3 h-3" /></span>
           </div>
         </motion.div>
       </div>

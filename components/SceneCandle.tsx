@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Wind } from 'lucide-react';
+import { Wind, Mic, MousePointerClick } from 'lucide-react';
 import { TransitionProps } from '../types';
 
 export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => {
@@ -10,6 +10,85 @@ export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => 
     const [windDirection, setWindDirection] = useState(0);
     const [particleCount, setParticleCount] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
+    const [micPermission, setMicPermission] = useState<boolean | null>(null);
+
+    // --- Audio / Blow Detection Logic ---
+    const handleBlow = useCallback(() => {
+        if (isBlown) return;
+        setIsBlown(true);
+        setTimeout(() => {
+            setShowWishes(true);
+            setTimeout(onNext, 4000); // Give enough time to read
+        }, 1000);
+    }, [isBlown, onNext]);
+
+    useEffect(() => {
+        if (!isActive || isBlown) return;
+
+        let audioContext: AudioContext | null = null;
+        let analyser: AnalyserNode | null = null;
+        let microphone: MediaStreamAudioSourceNode | null = null;
+        let dataArray: Uint8Array;
+        let animationFrameId: number;
+        let stream: MediaStream | null = null;
+
+        const checkBlow = () => {
+            if (!analyser) return;
+            analyser.getByteFrequencyData(dataArray);
+
+            // Calculate average volume
+            let sum = 0;
+            // Focus on lower frequencies where "blowing" usually lives
+            const length = dataArray.length;
+            for (let i = 0; i < length; i++) {
+                sum += dataArray[i];
+            }
+            const average = sum / length;
+
+            // Threshold for "blowing" - adjust as needed
+            // Normal talking is usually lower, direct blowing spikes volume
+            if (average > 45) { // Sensitivity threshold
+                handleBlow();
+            } else {
+                // Subtle flame reaction to sound
+                if (average > 10) {
+                    setWindDirection((Math.random() - 0.5) * (average / 10));
+                }
+                animationFrameId = requestAnimationFrame(checkBlow);
+            }
+        };
+
+        const initAudio = async () => {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                setMicPermission(true);
+
+                audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                microphone = audioContext.createMediaStreamSource(stream);
+
+                microphone.connect(analyser);
+                analyser.fftSize = 256;
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+                checkBlow();
+            } catch (err) {
+                console.warn("Microphone access denied or error:", err);
+                setMicPermission(false);
+            }
+        };
+
+        // Delay init slightly to avoid immediate prompt on page load if possible, 
+        // though isActive should handle it.
+        const timer = setTimeout(initAudio, 500);
+
+        return () => {
+            clearTimeout(timer);
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            if (stream) stream.getTracks().forEach(track => track.stop());
+            if (audioContext) audioContext.close();
+        };
+    }, [isActive, isBlown, handleBlow]);
 
     // Handle isActive prop - extinguish/re-light candle based on isActive
     // Only react to isActive changes, NOT isBlown changes.
@@ -60,19 +139,13 @@ export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => 
         return () => clearInterval(particleInterval);
     }, [isBlown]);
 
-    const handleBlow = () => {
-        if (isBlown) return;
-        setIsBlown(true);
-        setTimeout(() => {
-            setShowWishes(true);
-            setTimeout(onNext, 3000); // Give enough time to read
-        }, 1000);
-    };
+
 
     return (
         <div
             ref={containerRef}
-            className="relative w-full h-full bg-[#050308] flex flex-col items-center justify-center overflow-hidden"
+            onClick={handleBlow} // Click anywhere to blow
+            className="relative w-full h-full bg-[#050308] flex flex-col items-center justify-center overflow-hidden cursor-pointer"
         >
             {/* 1. Global Ambiance / Lighting */}
             {/* Enhanced global glow with multiple layers */}
@@ -364,28 +437,53 @@ export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => 
                                 >
                                     Happy Birthday
                                 </motion.p>
-                                <motion.div
-                                    animate={{
-                                        opacity: [0, 0.6, 0],
-                                        scale: [1, 1.1, 1]
-                                    }}
-                                    transition={{ duration: 2, repeat: Infinity }}
-                                    className="absolute inset-0 bg-gradient-to-r from-amber-200 to-orange-400 blur-xl opacity-40"
-                                />
                             </div>
 
-                            <motion.div
-                                whileHover={{
-                                    scale: 1.05,
-                                    backgroundColor: "rgba(255,255,255,0.12)",
-                                    y: -2
-                                }}
-                                whileTap={{ scale: 0.95 }}
-                                className="flex items-center gap-3 px-6 py-3 bg-white/8 backdrop-blur-md border border-white/15 rounded-full transition-all shadow-[0_0_20px_rgba(0,0,0,0.3)]"
+                            {/* Enhanced Graphic Guidance */}
+                            <div className="flex items-center gap-8 text-white/50 mt-4">
+                                <div className="flex flex-col items-center gap-2 group-hover:scale-110 transition-transform">
+                                    <div className="relative">
+                                        <motion.div
+                                            animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                                            transition={{ duration: 2, repeat: Infinity }}
+                                            className="absolute inset-0 bg-blue-300/20 rounded-full blur-md"
+                                        />
+                                        <Mic className="w-8 h-8 text-blue-200/80" />
+                                        <motion.div
+                                            className="absolute -right-2 -top-2"
+                                            animate={{
+                                                opacity: [0, 1, 0],
+                                                x: [0, 5, 10],
+                                                y: [0, -5, -10]
+                                            }}
+                                            transition={{ duration: 1.5, repeat: Infinity }}
+                                        >
+                                            <Wind className="w-3 h-3 text-blue-100" />
+                                        </motion.div>
+                                    </div>
+                                    <span className="text-[10px] tracking-widest uppercase">吹气</span>
+                                </div>
+
+                                <div className="h-8 w-[1px] bg-white/10"></div>
+
+                                <div className="flex flex-col items-center gap-2 group-hover:scale-110 transition-transform">
+                                    <motion.div
+                                        animate={{ y: [0, 3, 0] }}
+                                        transition={{ duration: 1.5, repeat: Infinity }}
+                                    >
+                                        <MousePointerClick className="w-8 h-8 text-amber-200/80" />
+                                    </motion.div>
+                                    <span className="text-[10px] tracking-widest uppercase">点击</span>
+                                </div>
+                            </div>
+
+                            <motion.p
+                                animate={{ opacity: [0.4, 0.8, 0.4] }}
+                                transition={{ duration: 3, repeat: Infinity }}
+                                className="text-xs text-white/30 tracking-[0.2em] font-light mt-2"
                             >
-                                <Wind className="w-4 h-4 text-blue-300/90" />
-                                <span className="text-[11px] font-sans tracking-[0.25em] uppercase text-blue-100/80 font-medium">吹灭这个蜡烛吧</span>
-                            </motion.div>
+                                对着麦克风吹气 或 点击任意位置
+                            </motion.p>
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -444,7 +542,7 @@ export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => 
                                     animate={{ opacity: [0.6, 1, 0.6] }}
                                     transition={{ duration: 2, repeat: Infinity }}
                                 >
-                                    许个愿望吧 ✨
+                                    许个愿望吧
                                 </motion.p>
                             </motion.div>
                         </motion.div>

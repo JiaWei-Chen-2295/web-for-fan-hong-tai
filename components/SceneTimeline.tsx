@@ -237,7 +237,7 @@ export const SceneTimeline: React.FC<TransitionProps> = ({ onNext }) => {
                         onClick={onNext}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="group relative px-8 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white font-bold tracking-widest overflow-hidden"
+                        className="group relative px-8 py-3 bg-[#6BA3D6] text-white font-bold tracking-widest rounded-full shadow-[0_10px_20px_-5px_rgba(107,163,214,0.4)] border border-white/20 overflow-hidden hover:shadow-[0_15px_30px_-5px_rgba(107,163,214,0.6)] transition-all"
                     >
                         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                         <span className="relative flex items-center gap-2">

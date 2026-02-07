@@ -69,7 +69,7 @@ export const SceneIntro: React.FC<TransitionProps> = ({ onNext, isActive }) => {
             <div className="px-6 py-4 text-center flex-1 flex flex-col justify-center">
               <div className="flex items-center gap-2 my-2 opacity-20">
                 <div className="h-[1px] flex-1 border-t border-dashed border-slate-900"></div>
-                <span className="text-xs">★</span>
+                <span className="text-xs text-slate-400">•</span>
                 <div className="h-[1px] flex-1 border-t border-dashed border-slate-900"></div>
               </div>
 
@@ -118,7 +118,7 @@ export const SceneIntro: React.FC<TransitionProps> = ({ onNext, isActive }) => {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.5, type: "spring", stiffness: 200 }}
-        className="relative z-20 w-full max-w-xs mt-8 bg-gradient-to-r from-mayday-blue via-lavender-mist to-honey-glow text-white font-bold text-lg h-14 rounded-full flex items-center justify-center gap-3 shadow-[0_0_25px_rgba(107,163,214,0.35)] border-b-4 border-deep-mayday active:border-b-0 active:translate-y-1 transition-all"
+        className="relative z-20 w-full max-w-xs mt-8 bg-[#6BA3D6] text-white font-bold text-lg h-14 rounded-full flex items-center justify-center gap-3 shadow-[0_10px_40px_-10px_rgba(232,196,138,0.6)] border border-white/20 group hover:scale-[1.02] transition-all duration-300"
       >
         <span className="font-brush text-xl tracking-wider pt-1">让我们回到那一天</span>
         <Play className="w-5 h-5 fill-current" />
