@@ -40,8 +40,8 @@ export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => 
 
         const flickerInterval = setInterval(() => {
             setFlameIntensity(prev => 0.8 + Math.random() * 0.4);
-            setWindDirection(prev => (Math.random() - 0.5) * 2);
-        }, 50);
+            setWindDirection(prev => (Math.random() - 0.5) * 1.5);
+        }, 300);
 
         return () => clearInterval(flickerInterval);
     }, [isBlown]);
@@ -84,7 +84,7 @@ export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => 
                             opacity: [0.25, 0.35, 0.25, 0.35],
                             scale: [1, 1.02, 0.98, 1]
                         }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-orange-900/25 rounded-full blur-[120px] pointer-events-none"
                     />
                     {/* Secondary glow for depth */}
@@ -93,7 +93,7 @@ export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => 
                             opacity: [0.15, 0.25, 0.15, 0.25],
                             scale: [1.1, 1.15, 1.05, 1.1]
                         }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-orange-800/15 rounded-full blur-[180px] pointer-events-none"
                     />
                     {/* Heat distortion effect */}
@@ -102,7 +102,7 @@ export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => 
                             opacity: [0.05, 0.1, 0.05],
                             y: [0, -5, 0]
                         }}
-                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-white/5 rounded-full blur-[60px] pointer-events-none"
                     />
                 </>
@@ -130,18 +130,18 @@ export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => 
                                 {/* Outer Glow (Atmosphere) - Multiple layers for depth */}
                                 <motion.div
                                     animate={{
-                                        scale: [1, 1.08, 0.95, 1.02, 1],
-                                        opacity: [0.4, 0.55, 0.4, 0.5]
+                                        scale: [1, 1.05, 0.98, 1.02, 1],
+                                        opacity: [0.4, 0.45, 0.4, 0.45]
                                     }}
-                                    transition={{ duration: 0.12, repeat: Infinity }}
+                                    transition={{ duration: 2.5, repeat: Infinity }}
                                     className="absolute bottom-4 left-1/2 -translate-x-1/2 w-40 h-40 bg-orange-400/25 rounded-full blur-[50px]"
                                 />
                                 <motion.div
                                     animate={{
-                                        scale: [1, 1.05, 0.98, 1.03, 1],
-                                        opacity: [0.3, 0.4, 0.3]
+                                        scale: [1, 1.03, 0.99, 1.02, 1],
+                                        opacity: [0.3, 0.35, 0.3]
                                     }}
-                                    transition={{ duration: 0.15, repeat: Infinity }}
+                                    transition={{ duration: 2, repeat: Infinity }}
                                     className="absolute bottom-8 left-1/2 -translate-x-1/2 w-32 h-32 bg-yellow-400/15 rounded-full blur-[40px]"
                                 />
 
@@ -155,13 +155,13 @@ export const SceneCandle: React.FC<TransitionProps> = ({ onNext, isActive }) => 
                                     {/* The Flame Shape Container - with realistic physics */}
                                     <motion.div
                                         animate={{
-                                            scaleY: [1, 1.08, 0.95, 1.05, 1],
-                                            rotate: [windDirection * 3, windDirection * -2, windDirection * 4, windDirection * -1, windDirection * 2],
-                                            skewX: [windDirection * 2, windDirection * -1, windDirection * 1.5],
-                                            scaleX: [1, 1.02, 0.98, 1.01, 1]
+                                            scaleY: [1, 1.04, 0.96, 1.02, 1],
+                                            rotate: [windDirection * 2, windDirection * -1.5, windDirection * 2.5, windDirection * -0.5, windDirection * 1.5],
+                                            skewX: [windDirection * 1.5, windDirection * -0.5, windDirection * 1],
+                                            scaleX: [1, 1.01, 0.99, 1.005, 1]
                                         }}
                                         transition={{
-                                            duration: 0.08,
+                                            duration: 1.5,
                                             repeat: Infinity,
                                             repeatType: "mirror",
                                             ease: "easeInOut"
