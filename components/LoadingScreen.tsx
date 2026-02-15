@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { gsap, useGSAP } from '../utils/gsap-setup';
 import { Music } from 'lucide-react';
 
 interface LoadingScreenProps {
@@ -20,6 +20,14 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     const [progress, setProgress] = useState(0);
     const [isDone, setIsDone] = useState(false);
 
+    const containerRef = useRef<HTMLDivElement>(null);
+    const blueGlowRef = useRef<HTMLDivElement>(null);
+    const goldGlowRef = useRef<HTMLDivElement>(null);
+    const spinnerRef = useRef<HTMLDivElement>(null);
+    const progressBarRef = useRef<HTMLDivElement>(null);
+    const infoRef = useRef<HTMLDivElement>(null);
+    const readyRef = useRef<HTMLDivElement>(null);
+
     useEffect(() => {
         let loadedCount = 0;
         const totalToLoad = RESOURCES.length + 1; // Images + Fonts
@@ -38,7 +46,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
             const img = new Image();
             img.src = src;
             img.onload = updateProgress;
-            img.onerror = updateProgress; // Continue anyway if one fails
+            img.onerror = updateProgress;
         });
 
         // 2. Preload Fonts
@@ -56,34 +64,77 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
         }
     }, [isDone, onComplete]);
 
+    // Looping glow animations
+    useGSAP(() => {
+        gsap.to(blueGlowRef.current, {
+            scale: 1.2,
+            opacity: 0.45,
+            duration: 4,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut',
+        });
+        gsap.to(goldGlowRef.current, {
+            scale: 1,
+            opacity: 0.35,
+            duration: 5,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut',
+            delay: 1,
+        });
+        gsap.to(spinnerRef.current, {
+            rotation: 360,
+            duration: 10,
+            repeat: -1,
+            ease: 'none',
+        });
+        gsap.fromTo(infoRef.current,
+            { opacity: 0 },
+            { opacity: 1, duration: 0.5 },
+        );
+    }, { scope: containerRef });
+
+    // Progress bar width
+    useGSAP(() => {
+        gsap.to(progressBarRef.current, {
+            width: `${progress}%`,
+            duration: 0.3,
+            ease: 'power1.out',
+        });
+    }, { dependencies: [progress], scope: containerRef });
+
+    // Ready text entrance
+    useGSAP(() => {
+        if (isDone && readyRef.current) {
+            gsap.fromTo(readyRef.current,
+                { opacity: 0, scale: 0.8 },
+                { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.5)' }
+            );
+        }
+    }, { dependencies: [isDone], scope: containerRef });
+
     return (
-        <div className="fixed inset-0 bg-sky-twilight z-[100] flex flex-col items-center justify-center text-white overflow-hidden">
+        <div ref={containerRef} className="fixed inset-0 bg-sky-twilight z-[100] flex flex-col items-center justify-center text-white overflow-hidden">
             {/* Background Decorative Elements - Blue + Gold Glow */}
-            <motion.div
-                animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.25, 0.45, 0.25]
-                }}
-                transition={{ duration: 4, repeat: Infinity }}
+            <div
+                ref={blueGlowRef}
+                style={{ opacity: 0.25 }}
                 className="absolute w-[500px] h-[500px] bg-mayday-blue/25 rounded-full blur-[120px] pointer-events-none"
             />
-            <motion.div
-                animate={{
-                    scale: [1.1, 1, 1.1],
-                    opacity: [0.2, 0.35, 0.2]
-                }}
-                transition={{ duration: 5, repeat: Infinity, delay: 1 }}
+            <div
+                ref={goldGlowRef}
+                style={{ scale: 1.1, opacity: 0.2 }}
                 className="absolute w-[400px] h-[400px] bg-honey-glow/20 rounded-full blur-[100px] pointer-events-none translate-x-20 translate-y-10"
             />
 
             <div className="relative z-10 flex flex-col items-center">
-                <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                <div
+                    ref={spinnerRef}
                     className="mb-8 p-4 rounded-full border border-white/5 bg-white/5 backdrop-blur-sm"
                 >
                     <Music className="w-8 h-8 text-mayday-blue" />
-                </motion.div>
+                </div>
 
                 <h2 className="font-brush text-3xl mb-8 tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
                     记忆正在装载...
@@ -91,41 +142,34 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
 
                 {/* Progress Bar Container */}
                 <div className="w-64 h-[2px] bg-white/10 rounded-full overflow-hidden relative">
-                    <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${progress}%` }}
+                    <div
+                        ref={progressBarRef}
+                        style={{ width: 0 }}
                         className="h-full bg-gradient-to-r from-mayday-blue via-lavender-mist to-honey-glow shadow-[0_0_12px_rgba(107,163,214,0.4)]"
                     />
                 </div>
 
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="mt-4 flex items-center gap-2"
-                >
+                <div ref={infoRef} className="mt-4 flex items-center gap-2">
                     <span className="text-[10px] font-mono tracking-tighter text-white/30 uppercase">
                         Collecting Memories
                     </span>
                     <span className="text-[10px] font-mono text-mayday-blue font-bold">
                         {progress}%
                     </span>
-                </motion.div>
+                </div>
             </div>
 
-            <AnimatePresence>
-                {isDone && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute bottom-20 flex flex-col items-center gap-2"
-                    >
-                        <p className="text-xs text-white/40 tracking-[0.3em] uppercase animate-pulse">
-                            Ready to go
-                        </p>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {isDone && (
+                <div
+                    ref={readyRef}
+                    style={{ opacity: 0 }}
+                    className="absolute bottom-20 flex flex-col items-center gap-2"
+                >
+                    <p className="text-xs text-white/40 tracking-[0.3em] uppercase animate-pulse">
+                        Ready to go
+                    </p>
+                </div>
+            )}
 
             {/* Film grain effect during loading */}
             <div className="absolute inset-0 pointer-events-none opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/noise.png')]" />

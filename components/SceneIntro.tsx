@@ -1,26 +1,87 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { gsap, useGSAP } from '../utils/gsap-setup';
+import { useHoverTap } from '../hooks/useHoverTap';
 import { Play } from 'lucide-react';
 import { TransitionProps } from '../types';
 
 export const SceneIntro: React.FC<TransitionProps> = ({ onNext, isActive }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const stadiumRef = useRef<HTMLDivElement>(null);
+  const conicGlowRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const ticketRef = useRef<HTMLDivElement>(null);
+  const subtitleRef = useRef<HTMLHeadingElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useHoverTap(buttonRef, { scale: 1.05 }, { scale: 0.95 });
+
+  useGSAP(() => {
+    // Background breathing
+    gsap.to(stadiumRef.current, {
+      scale: 1.05,
+      opacity: 0.45,
+      duration: 15,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut',
+    });
+
+    // Conic glow pulse
+    gsap.to(conicGlowRef.current, {
+      opacity: 0.4,
+      duration: 8,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut',
+    });
+
+    // Header entrance
+    gsap.fromTo(headerRef.current,
+      { opacity: 0, y: -20 },
+      { opacity: 1, y: 0, duration: 0.8, delay: 0.2, ease: 'power2.out' },
+    );
+
+    // Ticket entrance
+    gsap.fromTo(ticketRef.current,
+      { opacity: 0, scale: 0.95, y: 20 },
+      { opacity: 1, scale: 1, y: 0, duration: 1, delay: 0.5, ease: 'back.out(1.7)' },
+    );
+
+    // Title staggered entrance
+    gsap.fromTo(subtitleRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.6, delay: 1, ease: 'power2.out' },
+    );
+    gsap.fromTo(titleRef.current,
+      { opacity: 0, scale: 0.9 },
+      { opacity: 1, scale: 1, duration: 0.6, delay: 1.2, ease: 'power2.out' },
+    );
+
+    // Button entrance
+    gsap.fromTo(buttonRef.current,
+      { opacity: 0, y: 50 },
+      { opacity: 1, y: 0, duration: 0.8, delay: 1.5, ease: 'back.out(2)' },
+    );
+  }, { scope: containerRef });
+
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-between py-10 px-6 overflow-hidden">
+    <div ref={containerRef} className="relative w-full h-full flex flex-col items-center justify-between py-10 px-6 overflow-hidden">
       {/* Dynamic Background Beams & Venue Image */}
       {/* Background Layers */}
       <div className="absolute inset-0 bg-[#0c0a09] z-0 overflow-hidden">
         {/* Stadium Image Layer */}
-        <motion.div
-          animate={{ scale: [1, 1.05, 1], opacity: [0.35, 0.45, 0.35] }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        <div
+          ref={stadiumRef}
+          style={{ opacity: 0.35 }}
           className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1514525253440-b39345208668?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center grayscale-[0.2] sepia-[0.3]"
         />
 
         {/* Colorful Gradient Glows - Mayday Blue + Warm tones */}
         <div className="absolute inset-0 bg-gradient-to-b from-deep-mayday/40 via-transparent to-black" />
-        <motion.div
-          animate={{ opacity: [0.2, 0.4, 0.2] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        <div
+          ref={conicGlowRef}
+          style={{ opacity: 0.2 }}
           className="absolute inset-0 bg-gradient-conic from-mayday-blue/15 via-honey-glow/10 to-transparent blur-3xl"
         />
       </div>
@@ -29,10 +90,8 @@ export const SceneIntro: React.FC<TransitionProps> = ({ onNext, isActive }) => {
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/noise.png')] opacity-[0.15] z-0 pointer-events-none" />
 
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
+      <div
+        ref={headerRef}
         className="w-full flex justify-between items-end text-white/90 z-10"
       >
         <div className="flex flex-col">
@@ -42,13 +101,11 @@ export const SceneIntro: React.FC<TransitionProps> = ({ onNext, isActive }) => {
         <div className="text-[10px] border border-white/40 px-2 py-1 rounded-sm backdrop-blur-sm">
           NO. 2026-02-23
         </div>
-      </motion.div>
+      </div>
 
       {/* Ticket Main Content */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 1, delay: 0.5, type: "spring" }}
+      <div
+        ref={ticketRef}
         className="relative w-full max-w-sm z-10 mt-4"
       >
         <div className="border-[8px] border-[#1a1a1a] relative shadow-2xl rounded-sm overflow-hidden text-slate-900">
@@ -73,18 +130,18 @@ export const SceneIntro: React.FC<TransitionProps> = ({ onNext, isActive }) => {
                 <div className="h-[1px] flex-1 border-t border-dashed border-slate-900"></div>
               </div>
 
-              <motion.h2
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
+              <h2
+                ref={subtitleRef}
                 className="font-display font-bold uppercase tracking-widest text-mayday-blue text-xs mb-2"
               >
                 Happy Birthday, Franklin
-              </motion.h2>
-              <motion.h1
-                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.2 }}
+              </h2>
+              <h1
+                ref={titleRef}
                 className="font-brush text-4xl text-deep-mayday leading-tight mt-1 mb-4"
               >
                 生日快乐<br />我的好朋友，范部
-              </motion.h1>
+              </h1>
 
               <div className="flex flex-col gap-1 mb-6">
                 <p className="text-[10px] tracking-[0.2em] text-slate-500 uppercase font-bold">VIP ACCESS TICKET</p>
@@ -108,21 +165,17 @@ export const SceneIntro: React.FC<TransitionProps> = ({ onNext, isActive }) => {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* CTA Button */}
-      <motion.button
+      <button
+        ref={buttonRef}
         onClick={onNext}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.5, type: "spring", stiffness: 200 }}
         className="relative z-20 w-full max-w-xs mt-8 bg-[#6BA3D6] text-white font-bold text-lg h-14 rounded-full flex items-center justify-center gap-3 shadow-[0_10px_40px_-10px_rgba(232,196,138,0.6)] border border-white/20 group hover:scale-[1.02] transition-all duration-300"
       >
         <span className="font-brush text-xl tracking-wider pt-1">让我们回到那一天</span>
         <Play className="w-5 h-5 fill-current" />
-      </motion.button>
+      </button>
 
       <div className="absolute bottom-0 w-full h-32 bg-gradient-to-t from-black/50 to-transparent pointer-events-none z-0" />
     </div>

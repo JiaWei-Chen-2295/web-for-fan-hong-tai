@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import gsap from 'gsap';
 import { SceneIntro } from './components/SceneIntro';
 import { SceneCandle } from './components/SceneCandle';
 import { SceneTimeline } from './components/SceneTimeline';
@@ -24,22 +24,64 @@ export default function App() {
   }
 
   const [currentScene, setCurrentScene] = useState<Scene>(Scene.Intro);
+  const [displayedScene, setDisplayedScene] = useState<Scene>(Scene.Intro);
   const [direction, setDirection] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const sceneContainerRef = useRef<HTMLDivElement>(null);
 
   useConcertAudio(currentScene);
 
-  const nextScene = () => {
-    if (currentScene < Scene.Gift) {
+  const nextScene = useCallback(() => {
+    if (currentScene < Scene.Gift && !isTransitioning) {
       setDirection(1);
       setCurrentScene(prev => prev + 1);
     }
-  };
+  }, [currentScene, isTransitioning]);
 
-  const handleReplay = () => {
-    setDirection(-1);
-    setCurrentScene(Scene.Intro);
-  };
+  const handleReplay = useCallback(() => {
+    if (!isTransitioning) {
+      setDirection(-1);
+      setCurrentScene(Scene.Intro);
+    }
+  }, [isTransitioning]);
+
+  // Scene transition via GSAP (replaces AnimatePresence mode="wait")
+  useEffect(() => {
+    if (currentScene === displayedScene) return;
+    if (!sceneContainerRef.current) return;
+
+    setIsTransitioning(true);
+
+    // Exit animation
+    gsap.to(sceneContainerRef.current, {
+      opacity: 0,
+      filter: 'blur(20px)',
+      scale: 0.95,
+      duration: 0.5,
+      ease: 'power2.in',
+      onComplete: () => {
+        // Swap the scene content
+        setDisplayedScene(currentScene);
+
+        // Enter animation (needs a frame for React to render new content)
+        requestAnimationFrame(() => {
+          gsap.fromTo(sceneContainerRef.current,
+            { opacity: 0, filter: 'blur(10px)', scale: 1.05 },
+            {
+              opacity: 1,
+              filter: 'blur(0px)',
+              scale: 1,
+              duration: 0.8,
+              ease: 'expo.out',
+              onComplete: () => setIsTransitioning(false),
+            },
+          );
+        });
+      },
+    });
+  }, [currentScene, displayedScene]);
 
   if (isLoading) {
     return <LoadingScreen onComplete={() => setIsLoading(false)} />;
@@ -47,7 +89,7 @@ export default function App() {
 
   const renderScene = () => {
     const props = { onNext: nextScene, onReplay: handleReplay, isActive: true };
-    switch (currentScene) {
+    switch (displayedScene) {
       case Scene.Intro: return <SceneIntro {...props} />;
       case Scene.Candle: return <SceneCandle {...props} />;
       case Scene.Timeline: return <SceneTimeline {...props} />;
@@ -62,21 +104,12 @@ export default function App() {
       {/* Global Grain Overlay for Cinematic Feel */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03] z-50 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/noise.png')]"></div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentScene}
-          className="w-full h-full"
-          initial={{ opacity: 0, filter: 'blur(10px)', scale: 1.05 }}
-          animate={{ opacity: 1, filter: 'blur(0px)', scale: 1 }}
-          exit={{ opacity: 0, filter: 'blur(20px)', scale: 0.95, transition: { duration: 0.5 } }}
-          transition={{
-            duration: 0.8,
-            ease: [0.16, 1, 0.3, 1]
-          }}
-        >
-          {renderScene()}
-        </motion.div>
-      </AnimatePresence>
+      <div
+        ref={sceneContainerRef}
+        className="w-full h-full"
+      >
+        {renderScene()}
+      </div>
 
       {/* Progress / Stage Indicator */}
       <div className="absolute bottom-4 left-0 right-0 z-40 flex justify-center gap-2">

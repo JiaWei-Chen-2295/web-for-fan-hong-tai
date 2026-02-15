@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useRef } from 'react';
+import { useHoverTap } from '../hooks/useHoverTap';
 import { SceneCandleTest } from './SceneCandleTest';
 
 export const TestPage: React.FC = () => {
     const [candleActive, setCandleActive] = useState(true);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+
+    useHoverTap(buttonRef, { scale: 1.05 }, { scale: 0.95 });
 
     return (
         <div className="min-h-screen bg-transparent text-white flex flex-col items-center justify-center">
@@ -18,17 +21,14 @@ export const TestPage: React.FC = () => {
 
                 {/* Extinguish Button */}
                 <div className="flex justify-center p-4">
-                    <motion.button
+                    <button
+                        ref={buttonRef}
                         onClick={() => {
                             if (candleActive) {
-                                // Extinguish the candle
                                 setCandleActive(false);
-                                // Re-light after 5 seconds
                                 setTimeout(() => setCandleActive(true), 5000);
                             }
                         }}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
                         className={`px-6 py-2 border rounded-full text-white font-bold tracking-wider transition-colors ${
                             candleActive
                                 ? 'bg-white/10 border-white/20 hover:bg-white/20'
@@ -37,7 +37,7 @@ export const TestPage: React.FC = () => {
                         disabled={!candleActive}
                     >
                         {candleActive ? '熄灭蜡烛' : '蜡烛已熄灭'}
-                    </motion.button>
+                    </button>
                 </div>
             </div>
         </div>
