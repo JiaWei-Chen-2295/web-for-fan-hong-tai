@@ -276,7 +276,7 @@ export const SceneTimeline: React.FC<TransitionProps> = ({ onNext }) => {
                     ></div>
 
                     <MemoryNode
-                        title="拼杯奶茶的默契"
+                        title="初识之时的拼杯奶茶"
                         desc="2023.09.13 · 我第一次喝学校的奶茶，和你一起拼的杯。"
                         img="/assets/hu_shang_a_yi.jpg"
                         icon={Coffee}
@@ -299,7 +299,7 @@ export const SceneTimeline: React.FC<TransitionProps> = ({ onNext }) => {
 
                     <MemoryNode
                         title="你的成名曲"
-                        desc="2023.10.16 · 学生会周会唱歌的那个瞬间，舞台上的光都聚在你身上。"
+                        desc="2023.10.16 · 学生会周会唱歌的那个瞬间，你的成名曲就诞生了。"
                         img="/assets/cheng_ming_qu.jpg"
                         icon={Mic}
                         color="#3b82f6"
@@ -309,8 +309,8 @@ export const SceneTimeline: React.FC<TransitionProps> = ({ onNext }) => {
                     />
 
                     <MemoryNode
-                        title="义无反顾的陪伴"
-                        desc="2024.05.22 · 你那天看着我纠结，义无反顾决定陪我去。"
+                        title="义无反顾的陪伴（AI复刻）"
+                        desc="2024.05.22 · 这张是我用 AI 生成的想象画面，想记住的是你愿意陪我的那份心意；很怪，偏离了我们的长相，未来我会持续优化这个画面，直到它能更好地代表我心中那个义无反顾的你。"
                         img="/assets/pei_ban.jpg"
                         icon={Ticket}
                         color="#fca5a5"
