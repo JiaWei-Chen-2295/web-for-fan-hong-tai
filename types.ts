@@ -3,7 +3,8 @@ export enum Scene {
   Candle = 1,
   Timeline = 2,
   Letter = 3,
-  Gift = 4
+  Airplane = 4,
+  Gift = 5
 }
 
 export interface TransitionProps {

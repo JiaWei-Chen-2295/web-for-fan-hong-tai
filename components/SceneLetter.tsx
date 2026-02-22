@@ -6,6 +6,7 @@ import { gsapSprings } from '../utils/gsap-setup';
 import { useHoverTap } from '../hooks/useHoverTap';
 import { ArrowRight, Quote, Music, Beer, Star, Sparkles } from 'lucide-react';
 import { TransitionProps } from '../types';
+import { letterContent } from '../content/letterContent';
 
 /**
  * SceneLetter — 信封开启动画 (GSAP version)
@@ -47,6 +48,7 @@ const kraft = {
 const paperNoiseSvg = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E")`;
 
 type Phase = 'idle' | 'sealBreak' | 'flapTear' | 'letterPeek' | 'letterSlide' | 'letterRise' | 'reading';
+const LETTER_PULL_OUT_SPEED = 1.35;
 
 // ─── Sub-components ────────────────────────────────────────────
 
@@ -179,6 +181,7 @@ export const SceneLetter: React.FC<TransitionProps> = ({ onNext }) => {
 
     // Phase: idle (1s wait)
     tl.to({}, { duration: 1 })
+    .call(() => { tl.timeScale(LETTER_PULL_OUT_SPEED); })
 
     // Phase: sealBreak — seal cracks + envelope shakes
     .call(() => setPhase('sealBreak'))
@@ -500,7 +503,7 @@ export const SceneLetter: React.FC<TransitionProps> = ({ onNext }) => {
                     className="text-[10px] tracking-[0.3em] uppercase font-serif"
                     style={{ color: kraft.bodyDark, opacity: 0.35 }}
                   >
-                    A Letter For You
+                    {letterContent.envelopePreviewTitle}
                   </span>
                 </div>
 
@@ -681,18 +684,16 @@ export const SceneLetter: React.FC<TransitionProps> = ({ onNext }) => {
               <Quote className="absolute top-3 left-3 w-4 h-4" style={{ color: `${kraft.gold}40` }} />
 
               <div className="space-y-4 font-serif text-gray-700 leading-relaxed">
-                <p className="font-bold text-[15px] text-gray-800">致 范宏泰：</p>
+                <p className="font-bold text-[15px] text-gray-800">{letterContent.recipient}</p>
 
-                <p className="text-sm leading-relaxed">
-                  这一年无论是你的陪伴还是照顾，我其实一直都记在心里。偶然间留心到了你的生日，虽不确定这个惊喜是否完全合你的心意，但真心希望这些碎碎念的记忆能让你感到温暖。
-                </p>
-
-                <p className="text-sm leading-relaxed">
-                  从大一一起抢票看演唱会，到大二在大雨里陪你取手机的劳动周，再到大三我们依然并肩而行……总有那么一些瞬间，让我深深感受到你的那份善意与包容。
-                </p>
+                {letterContent.paragraphs.map((paragraph, index) => (
+                  <p key={`paragraph-${index}`} className="text-sm leading-relaxed">
+                    {paragraph}
+                  </p>
+                ))}
 
                 <p className="font-bold text-base italic" style={{ color: kraft.sealRed }}>
-                  &ldquo;那一夜，没有你真的完全不行。&rdquo;
+                  &ldquo;{letterContent.highlightQuote}&rdquo;
                 </p>
 
                 <div
@@ -701,18 +702,23 @@ export const SceneLetter: React.FC<TransitionProps> = ({ onNext }) => {
                 >
                   <Music className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8" style={{ color: `${kraft.gold}18` }} />
                   <p className="text-sm italic text-gray-600 leading-relaxed">
-                    &ldquo;我走过的路 只有希望<br />
-                    希望你我讲过的话 放在心肝里<br />
-                    总有那么一天&rdquo;
+                    &ldquo;
+                    {letterContent.songQuote.lines.map((line, index) => (
+                      <React.Fragment key={`song-line-${index}`}>
+                        {line}
+                        {index < letterContent.songQuote.lines.length - 1 && <br />}
+                      </React.Fragment>
+                    ))}
+                    &rdquo;
                   </p>
                   <span className="block text-[10px] tracking-widest text-gray-400 font-bold uppercase mt-2">
-                    —《憨人》
+                    {letterContent.songQuote.source}
                   </span>
                 </div>
 
                 <div className="pt-4 text-right" style={{ borderTop: `1px solid ${kraft.gold}30` }}>
-                  <p className="text-sm font-bold text-gray-800">永远的朋友，陈佳玮</p>
-                  <p className="font-handwritten text-xl mt-1" style={{ color: kraft.gold }}>2026.2.23</p>
+                  <p className="text-sm font-bold text-gray-800">{letterContent.signatureName}</p>
+                  <p className="font-handwritten text-xl mt-1" style={{ color: kraft.gold }}>{letterContent.signatureDate}</p>
                 </div>
               </div>
             </div>
@@ -729,7 +735,7 @@ export const SceneLetter: React.FC<TransitionProps> = ({ onNext }) => {
             opacity: 0,
           }}
         >
-          <span>最后的惊喜</span>
+          <span>{letterContent.nextButtonText}</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>
@@ -746,29 +752,29 @@ export const SceneLetter: React.FC<TransitionProps> = ({ onNext }) => {
         >
           <div className="inline-flex animate-marquee">
             <span className="mx-8 text-sm text-lavender-mist/40 font-serif italic tracking-wide">
-              未来的你 会一帆风顺
+              {letterContent.marqueeLines[0]}
             </span>
             <span className="mx-8 text-sm text-mayday-blue/30"><Star className="w-3 h-3" /></span>
             <span className="mx-8 text-sm text-honey-glow/35 font-serif italic tracking-wide">
-              如果你忘了我 就让风替代我 说出对你的感谢
+              {letterContent.marqueeLines[1]}
             </span>
             <span className="mx-8 text-sm text-blush-coral/30"><Music className="w-3 h-3" /></span>
             <span className="mx-8 text-sm text-lavender-mist/40 font-serif italic tracking-wide">
-              如果能有一天 再一次重返光荣 记得找我 我的好朋友
+              {letterContent.marqueeLines[2]}
             </span>
             <span className="mx-8 text-sm text-mayday-blue/30"><Sparkles className="w-3 h-3" /></span>
           </div>
           <div className="inline-flex animate-marquee" aria-hidden="true">
             <span className="mx-8 text-sm text-lavender-mist/40 font-serif italic tracking-wide">
-              未来的你 会一帆风顺
+              {letterContent.marqueeLines[0]}
             </span>
             <span className="mx-8 text-sm text-mayday-blue/30"><Star className="w-3 h-3" /></span>
             <span className="mx-8 text-sm text-honey-glow/35 font-serif italic tracking-wide">
-              如果你忘了我 就让风替代我 说出对你的感谢
+              {letterContent.marqueeLines[1]}
             </span>
             <span className="mx-8 text-sm text-blush-coral/30"><Music className="w-3 h-3" /></span>
             <span className="mx-8 text-sm text-lavender-mist/40 font-serif italic tracking-wide">
-              如果能有一天 再一次重返光荣 记得找我 我的好朋友
+              {letterContent.marqueeLines[2]}
             </span>
             <span className="mx-8 text-sm text-mayday-blue/30"><Sparkles className="w-3 h-3" /></span>
           </div>

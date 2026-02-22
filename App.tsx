@@ -4,6 +4,7 @@ import { SceneIntro } from './components/SceneIntro';
 import { SceneCandle } from './components/SceneCandle';
 import { SceneTimeline } from './components/SceneTimeline';
 import { SceneLetter } from './components/SceneLetter';
+import { SceneAirplane } from './components/SceneAirplane';
 import { SceneGift } from './components/SceneGift';
 import { LoadingScreen } from './components/LoadingScreen';
 import { TestPage } from './components/TestPage';
@@ -87,6 +88,8 @@ export default function App() {
     return <LoadingScreen onComplete={() => setIsLoading(false)} />;
   }
 
+  const totalScenes = Scene.Gift + 1;
+
   const renderScene = () => {
     const props = { onNext: nextScene, onReplay: handleReplay, isActive: true };
     switch (displayedScene) {
@@ -94,6 +97,7 @@ export default function App() {
       case Scene.Candle: return <SceneCandle {...props} />;
       case Scene.Timeline: return <SceneTimeline {...props} />;
       case Scene.Letter: return <SceneLetter {...props} />;
+      case Scene.Airplane: return <SceneAirplane {...props} />;
       case Scene.Gift: return <SceneGift {...props} />;
       default: return null;
     }
@@ -113,7 +117,7 @@ export default function App() {
 
       {/* Progress / Stage Indicator */}
       <div className="absolute bottom-4 left-0 right-0 z-40 flex justify-center gap-2">
-        {[0, 1, 2, 3, 4].map((i) => (
+        {Array.from({ length: totalScenes }, (_, i) => i).map((i) => (
           <div
             key={i}
             className={`h-1 rounded-full transition-all duration-500 ${i === currentScene ? 'w-8 bg-white' : 'w-2 bg-white/20'}`}

@@ -1,0 +1,1247 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>纪念入场券 · 二维码通行</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@500;600;700&family=Noto+Serif+SC:wght@500;600;700&display=swap");
+
+      :root {
+        --bg-a: #0f1727;
+        --bg-b: #1a263a;
+        --bg-c: #223149;
+        --paper-a: #f8f0dc;
+        --paper-b: #ebd9b5;
+        --paper-c: #dfc99f;
+        --paper-edge: #d1b27d;
+        --ink: #1f2f47;
+        --ink-soft: #4d5f7e;
+        --accent: #1f5c98;
+        --accent-deep: #174678;
+        --gold: #b78b4d;
+        --line: #c3aa7d;
+        --line-soft: rgba(72, 58, 31, 0.18);
+        --font-display: "Cormorant Garamond", "Noto Serif SC", serif;
+        --font-body: "Manrope", "PingFang SC", "Microsoft YaHei", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+      }
+
+      body {
+        color: #eef4ff;
+        font-family: var(--font-body);
+        background:
+          radial-gradient(1200px 500px at 20% -8%, rgba(177, 143, 89, 0.22), transparent 50%),
+          radial-gradient(900px 380px at 88% 2%, rgba(62, 129, 199, 0.28), transparent 58%),
+          linear-gradient(165deg, var(--bg-a) 0%, var(--bg-b) 48%, var(--bg-c) 100%);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.08;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.6) 0.6px, transparent 0.6px);
+        background-size: 2px 2px;
+      }
+
+      .page {
+        width: min(1120px, 92vw);
+        margin: 34px auto 54px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero {
+        margin-bottom: 20px;
+      }
+
+      .hero-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(246, 225, 185, 0.45);
+        background: linear-gradient(120deg, rgba(255, 255, 255, 0.16), rgba(255, 233, 190, 0.08));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      .hero-title {
+        margin: 14px 0 10px;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: clamp(34px, 4.3vw, 52px);
+        line-height: 1.12;
+        letter-spacing: 0.02em;
+        text-shadow: 0 5px 22px rgba(5, 10, 20, 0.32);
+      }
+
+      .hero-desc {
+        margin: 0;
+        max-width: 760px;
+        color: rgba(232, 240, 255, 0.9);
+        line-height: 1.75;
+      }
+
+      .prep {
+        margin-top: 18px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: linear-gradient(160deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+        backdrop-filter: blur(8px);
+        padding: 16px;
+      }
+
+      .prep-title {
+        margin: 0 0 12px;
+        font-size: 13px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #f1ddba;
+      }
+
+      .prep-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .prep-item {
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(8, 17, 34, 0.46);
+        padding: 10px 12px;
+        animation: prep-rise 0.5s ease both;
+      }
+
+      .prep-item:nth-child(1) {
+        animation-delay: 0.04s;
+      }
+
+      .prep-item:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+
+      .prep-item:nth-child(3) {
+        animation-delay: 0.16s;
+      }
+
+      .prep-item:nth-child(4) {
+        animation-delay: 0.22s;
+      }
+
+      .prep-item b {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 10px;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: #efd09a;
+      }
+
+      .prep-item span {
+        font-size: 13px;
+        color: #edf2ff;
+      }
+
+      .ticket {
+        margin-top: 20px;
+        border-radius: 30px;
+        overflow: hidden;
+        position: relative;
+        isolation: isolate;
+        border: 1px solid rgba(179, 149, 102, 0.34);
+        background:
+          radial-gradient(circle at 12% 12%, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0) 40%),
+          radial-gradient(circle at 88% 78%, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 46%),
+          linear-gradient(160deg, var(--paper-a) 0%, var(--paper-b) 68%, var(--paper-c) 100%);
+        box-shadow:
+          0 28px 64px rgba(5, 12, 24, 0.5),
+          inset 0 1px 0 rgba(255, 255, 255, 0.92),
+          inset 0 -1px 0 rgba(136, 107, 57, 0.24),
+          inset 0 0 0 1px rgba(255, 244, 221, 0.38);
+        animation: ticket-reveal 0.75s cubic-bezier(0.19, 1, 0.22, 1);
+      }
+
+      .ticket::before,
+      .ticket::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #192434;
+        transform: translateY(-50%);
+        z-index: 4;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+      }
+
+      .ticket::before {
+        left: -15px;
+      }
+
+      .ticket::after {
+        right: -15px;
+      }
+
+      .ticket-inner {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1.35fr 0.65fr;
+      }
+
+      .ticket-inner::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 2;
+        background: linear-gradient(
+          112deg,
+          transparent 0%,
+          transparent 44%,
+          rgba(255, 255, 255, 0.24) 48%,
+          transparent 54%,
+          transparent 100%
+        );
+        transform: translateX(-130%);
+        animation: ticket-sheen 7s ease-in-out infinite;
+      }
+
+      .ticket-left {
+        position: relative;
+        padding: 28px 24px 20px;
+        border-right: 2px dashed rgba(60, 47, 23, 0.24);
+      }
+
+      .ticket-left .ticket-title::after {
+        content: "";
+        display: block;
+        width: 112px;
+        height: 2px;
+        margin-top: 10px;
+        background: linear-gradient(90deg, rgba(24, 50, 82, 0.58), rgba(24, 50, 82, 0));
+      }
+
+      .ticket-left::before {
+        content: "ACCESS";
+        position: absolute;
+        right: 18px;
+        top: 14px;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 64px;
+        letter-spacing: 0.1em;
+        color: rgba(46, 65, 101, 0.08);
+        pointer-events: none;
+      }
+
+      .ticket-left::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.14;
+        background-image: radial-gradient(rgba(64, 81, 114, 0.42) 0.7px, transparent 0.7px);
+        background-size: 4px 4px;
+      }
+
+      .ticket-id {
+        position: relative;
+        z-index: 1;
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 4px 10px 4px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(43, 63, 95, 0.25);
+        background: rgba(255, 255, 255, 0.4);
+        color: #3f5478;
+        font-size: 10px;
+        letter-spacing: 0.19em;
+        text-transform: uppercase;
+      }
+
+      .ticket-id::before {
+        content: "Admit One";
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        color: #f9f3e6;
+        background: linear-gradient(110deg, #2f4e78, #173961);
+        letter-spacing: 0.09em;
+      }
+
+      .ticket-title {
+        position: relative;
+        z-index: 1;
+        margin: 14px 0 10px;
+        font-family: var(--font-display);
+        font-size: clamp(30px, 3.6vw, 42px);
+        font-weight: 700;
+        line-height: 1.06;
+        letter-spacing: 0.02em;
+        color: var(--ink);
+      }
+
+      .ticket-sub {
+        position: relative;
+        z-index: 1;
+        margin: 0 0 14px;
+        color: var(--ink-soft);
+        line-height: 1.7;
+        font-weight: 500;
+      }
+
+      .ticket-url {
+        position: relative;
+        z-index: 1;
+        margin: 0 0 14px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid rgba(47, 73, 110, 0.2);
+        background: rgba(255, 255, 255, 0.46);
+        color: #2a426a;
+        font-size: 13px;
+        font-weight: 700;
+        word-break: break-all;
+      }
+
+      .ticket-note {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        padding: 18px 14px 14px 16px;
+        border: 1px dashed rgba(104, 75, 31, 0.42);
+        border-radius: 10px;
+        background:
+          linear-gradient(120deg, rgba(183, 139, 77, 0.15), rgba(255, 255, 255, 0.4)),
+          repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.35) 0 22px, rgba(139, 112, 67, 0.08) 22px 23px);
+        color: #4f3d24;
+        line-height: 1.72;
+        white-space: pre-line;
+        box-shadow:
+          0 8px 20px rgba(76, 55, 25, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.58);
+        transform: rotate(-0.35deg);
+      }
+
+      .ticket-note::before {
+        content: "MEMO";
+        position: absolute;
+        top: -9px;
+        left: 10px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(115, 85, 38, 0.34);
+        background: rgba(255, 248, 230, 0.9);
+        color: #7a5f35;
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .ticket-note::after {
+        content: "";
+        position: absolute;
+        right: 10px;
+        top: -7px;
+        width: 30px;
+        height: 14px;
+        border-radius: 3px;
+        background: linear-gradient(90deg, rgba(174, 203, 235, 0.55), rgba(138, 171, 205, 0.38));
+        transform: rotate(8deg);
+        box-shadow: 0 2px 6px rgba(49, 72, 100, 0.18);
+      }
+
+      .ticket-meta {
+        position: relative;
+        z-index: 1;
+        margin-top: 16px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .ticket-meta div {
+        padding: 10px 10px 9px;
+        border-radius: 10px;
+        border: 1px solid rgba(35, 58, 96, 0.18);
+        background: rgba(255, 255, 255, 0.38);
+      }
+
+      .ticket-meta b {
+        display: block;
+        margin-bottom: 4px;
+        color: #5c6f8f;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+      }
+
+      .ticket-meta span {
+        color: #31486f;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .ticket-foot {
+        position: relative;
+        z-index: 1;
+        margin-top: 12px;
+      }
+
+      .micro-copy {
+        margin: 0 0 8px;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #6f6183;
+      }
+
+      .barcode {
+        height: 34px;
+        border-radius: 8px;
+        border: 1px solid var(--line-soft);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0)),
+          repeating-linear-gradient(
+            90deg,
+            #162843 0 1px,
+            transparent 1px 2px,
+            #162843 2px 4px,
+            transparent 4px 5px,
+            #162843 5px 6px,
+            transparent 6px 9px,
+            #162843 9px 12px,
+            transparent 12px 14px
+          );
+        opacity: 0.72;
+      }
+
+      .ticket-right {
+        position: relative;
+        padding: 20px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.52), rgba(255, 255, 255, 0.28)),
+          repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.4) 0 6px, rgba(219, 199, 161, 0.38) 6px 7px),
+          linear-gradient(155deg, #f7edd7, #e6d3ab);
+      }
+
+      .ticket-right::before {
+        content: "STUB COPY";
+        position: absolute;
+        top: 18px;
+        right: 12px;
+        font-size: 10px;
+        letter-spacing: 0.32em;
+        color: rgba(36, 56, 88, 0.42);
+        writing-mode: vertical-rl;
+      }
+
+      .ticket-right::after {
+        content: "VALID FOR SINGLE ENTRY";
+        position: absolute;
+        left: 14px;
+        bottom: 12px;
+        font-size: 10px;
+        letter-spacing: 0.17em;
+        color: rgba(66, 52, 27, 0.54);
+      }
+
+      .qr-card {
+        position: relative;
+        border-radius: 20px;
+        padding: 16px 14px 14px;
+        border: 1px solid rgba(44, 66, 103, 0.24);
+        background:
+          radial-gradient(circle at 84% 16%, rgba(132, 173, 218, 0.16), transparent 36%),
+          linear-gradient(180deg, #fffef9, #f7edd8);
+        box-shadow:
+          0 14px 34px rgba(30, 43, 66, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.94);
+      }
+
+      .qr-card::before {
+        content: "";
+        position: absolute;
+        top: 10px;
+        left: 12px;
+        width: 56px;
+        height: 6px;
+        border-radius: 999px;
+        background: rgba(122, 164, 207, 0.35);
+        pointer-events: none;
+      }
+
+      .qr-card::after {
+        content: "";
+        position: absolute;
+        inset: 8px;
+        border-radius: 14px;
+        border: 1px solid rgba(37, 62, 96, 0.14);
+        pointer-events: none;
+      }
+
+      .qr-head {
+        margin: 0 0 10px;
+        text-align: center;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: #3a5a84;
+      }
+
+      .qr-shell {
+        padding: 10px;
+        border-radius: 14px;
+        border: 1px solid rgba(32, 52, 81, 0.15);
+        background: #ffffff;
+        box-shadow:
+          0 8px 18px rgba(27, 41, 63, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      }
+
+      #qrcode {
+        width: 208px;
+        height: 208px;
+        margin: 0 auto;
+        display: grid;
+        place-items: center;
+      }
+
+      #qrcode img,
+      #qrcode canvas {
+        width: 100% !important;
+        height: 100% !important;
+        display: block;
+        border-radius: 8px;
+      }
+
+      .qr-tip {
+        margin-top: 10px;
+        text-align: center;
+        color: #31507a;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+
+      .qr-tip::before {
+        content: "";
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        margin-right: 6px;
+        vertical-align: middle;
+        border-radius: 50%;
+        background: #2f9f5a;
+        box-shadow: 0 0 0 4px rgba(47, 159, 90, 0.14);
+      }
+
+      .actions {
+        margin-top: 12px;
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        max-width: 760px;
+      }
+
+      button {
+        border: 0;
+        height: 40px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-family: var(--font-body);
+        font-weight: 700;
+        font-size: 13px;
+        letter-spacing: 0.02em;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+      }
+
+      button:hover:not(:disabled) {
+        transform: translateY(-1px);
+      }
+
+      button:disabled {
+        opacity: 0.48;
+        cursor: not-allowed;
+      }
+
+      .btn-accent {
+        color: #fff;
+        background: linear-gradient(120deg, #7f5a2a, #b88f51);
+        box-shadow: 0 8px 16px rgba(129, 95, 45, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      }
+
+      .btn-main {
+        color: #fff;
+        background: linear-gradient(120deg, var(--accent), var(--accent-deep));
+        box-shadow: 0 8px 16px rgba(24, 71, 121, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.23);
+      }
+
+      .btn-ghost {
+        color: #1f3f68;
+        background: rgba(255, 255, 255, 0.82);
+        border: 1px solid rgba(38, 67, 106, 0.2);
+      }
+
+      button:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      .editor {
+        margin-top: 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: linear-gradient(160deg, rgba(6, 13, 26, 0.58), rgba(14, 24, 43, 0.36));
+        backdrop-filter: blur(7px);
+        padding: 16px;
+      }
+
+      .editor-title {
+        margin: 0 0 12px;
+        color: #f3e2c0;
+        font-size: 12px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .field label {
+        display: block;
+        margin-bottom: 6px;
+        color: #c7d9ff;
+        font-size: 12px;
+      }
+
+      .field input,
+      .field textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.06));
+        color: #eff5ff;
+        font-size: 14px;
+        font-family: var(--font-body);
+        outline: none;
+      }
+
+      .field input:focus,
+      .field textarea:focus {
+        border-color: rgba(106, 166, 232, 0.65);
+        box-shadow: 0 0 0 3px rgba(67, 124, 190, 0.22);
+      }
+
+      .field textarea {
+        min-height: 84px;
+        resize: vertical;
+      }
+
+      .note-presets {
+        margin-top: 10px;
+      }
+
+      .note-presets-title {
+        margin: 0 0 8px;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #9eb8df;
+      }
+
+      .preset-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .preset-chip {
+        height: auto;
+        min-height: 0;
+        border-radius: 999px;
+        padding: 6px 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(182, 206, 241, 0.38);
+        color: #d8e8ff;
+        font-size: 12px;
+        font-weight: 600;
+        box-shadow: none;
+      }
+
+      .preset-chip:hover:not(:disabled) {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.16);
+      }
+
+      .footer-tip {
+        margin-top: 12px;
+        color: #a6bcdf;
+        font-size: 12px;
+      }
+
+      code {
+        padding: 1px 6px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.09);
+        color: #ffe9bf;
+      }
+
+      @keyframes ticket-reveal {
+        0% {
+          opacity: 0;
+          transform: translateY(12px) scale(0.99);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes ticket-sheen {
+        0% {
+          transform: translateX(-130%);
+        }
+        30% {
+          transform: translateX(-130%);
+        }
+        60% {
+          transform: translateX(130%);
+        }
+        100% {
+          transform: translateX(130%);
+        }
+      }
+
+      @keyframes prep-rise {
+        0% {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 920px) {
+        .page {
+          width: min(440px, 94vw);
+          margin: 16px auto 30px;
+        }
+
+        .hero {
+          margin-bottom: 14px;
+        }
+
+        .hero-kicker {
+          font-size: 10px;
+          letter-spacing: 0.16em;
+        }
+
+        .hero-title {
+          margin-top: 10px;
+          font-size: clamp(30px, 8.4vw, 40px);
+        }
+
+        .hero-desc {
+          font-size: 14px;
+          line-height: 1.65;
+        }
+
+        .prep {
+          padding: 14px;
+        }
+
+        .prep-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .ticket-inner {
+          grid-template-columns: 1fr;
+        }
+
+        .ticket::before,
+        .ticket::after {
+          display: none;
+        }
+
+        .ticket-left {
+          padding: 20px 16px 16px;
+          border-right: 0;
+          border-bottom: 2px dashed rgba(69, 54, 28, 0.24);
+        }
+
+        .ticket-left::before {
+          font-size: 46px;
+          top: 10px;
+          right: 12px;
+        }
+
+        .ticket-title {
+          font-size: clamp(28px, 8vw, 36px);
+        }
+
+        .ticket-sub {
+          font-size: 14px;
+        }
+
+        .ticket-url {
+          font-size: 12px;
+        }
+
+        .ticket-note {
+          font-size: 14px;
+        }
+
+        .ticket-meta {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .ticket-meta div:last-child {
+          grid-column: 1 / -1;
+        }
+
+        .ticket-right {
+          padding: 14px 14px 18px;
+        }
+
+        .qr-card {
+          padding: 14px 12px 12px;
+        }
+
+        .qr-shell {
+          padding: 12px;
+        }
+
+        .qr-tip {
+          font-size: 13px;
+        }
+
+        .editor {
+          margin-top: 14px;
+          padding: 14px;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .actions {
+          max-width: 100%;
+          grid-template-columns: 1fr;
+        }
+
+        button {
+          height: 46px;
+          font-size: 14px;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .page {
+          width: 95vw;
+        }
+
+        .hero-title {
+          font-size: clamp(28px, 8.8vw, 36px);
+        }
+
+        .ticket-id {
+          letter-spacing: 0.14em;
+        }
+
+        .ticket-meta {
+          grid-template-columns: 1fr;
+        }
+
+        .ticket-meta div:last-child {
+          grid-column: auto;
+        }
+
+        .ticket-right::after {
+          font-size: 9px;
+          letter-spacing: 0.12em;
+        }
+
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .ticket,
+        .ticket-inner::before,
+        .prep-item,
+        button {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <span class="hero-kicker">Memory Collector · Entry Pass</span>
+        <h1 class="hero-title">让这次相遇从一张票根开始</h1>
+        <p class="hero-desc">
+          这是一张“入场二维码票券”。先看提示，再扫码进入完整互动页，让节奏更完整，也更有仪式感。
+        </p>
+
+        <div class="prep">
+          <h2 class="prep-title">入场前提示</h2>
+          <div class="prep-grid">
+            <div class="prep-item">
+              <b>建议时长</b>
+              <span>约 2-3 分钟完整体验</span>
+            </div>
+            <div class="prep-item">
+              <b>建议环境</b>
+              <span>可能需要麦克风，没有声音也可继续</span>
+            </div>
+            <div class="prep-item">
+              <b>设备建议</b>
+              <span>手机竖屏，尽量全屏</span>
+            </div>
+            <div class="prep-item">
+              <b>体验内容</b>
+              <span>回忆动画 + 留言片段 + 隐藏彩蛋</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="ticket" id="ticket">
+        <div class="ticket-inner">
+          <article class="ticket-left">
+            <span class="ticket-id">NO. 2026-ACCESS-STUB</span>
+            <h2 class="ticket-title" id="previewTitle"></h2>
+            <p class="ticket-sub" id="previewSub"></p>
+            <p class="ticket-url" id="previewUrl"></p>
+            <p class="ticket-note" id="previewNote"></p>
+
+            <div class="ticket-meta">
+              <div>
+                <b>Type</b>
+                <span>Memory Access</span>
+              </div>
+              <div>
+                <b>Access</b>
+                <span>QR Entry</span>
+              </div>
+              <div>
+                <b>Status</b>
+                <span>可入场</span>
+              </div>
+            </div>
+
+            <div class="ticket-foot">
+              <p class="micro-copy">Valid for single entry · Keep this stub</p>
+              <div class="barcode" aria-hidden="true"></div>
+            </div>
+          </article>
+
+          <aside class="ticket-right">
+            <div class="qr-card">
+              <h3 class="qr-head">Scan To Open</h3>
+              <div class="qr-shell">
+                <div id="qrcode"></div>
+              </div>
+              <p class="qr-tip">微信长按识别二维码</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="editor">
+        <h3 class="editor-title">票券配置</h3>
+        <div class="form-grid">
+          <div class="field">
+            <label for="urlInput">网站链接</label>
+            <input id="urlInput" type="text" />
+          </div>
+          <div class="field">
+            <label for="titleInput">卡片标题</label>
+            <input id="titleInput" type="text" />
+          </div>
+          <div class="field">
+            <label for="subInput">卡片副标题</label>
+            <input id="subInput" type="text" />
+          </div>
+          <div class="field">
+            <label for="noteInput">卡片备注</label>
+            <textarea id="noteInput"></textarea>
+            <div class="note-presets">
+              <p class="note-presets-title">备注语气</p>
+              <div class="preset-chips">
+                <button class="preset-chip" type="button" data-note="可能会临时用到麦克风，没有声音也可继续。">克制说明</button>
+                <button class="preset-chip" type="button" data-note="把环境交给安静，把注意力交给你。麦克风如果没有反应，也请继续往下。">电影感</button>
+                <button class="preset-chip" type="button" data-note="麦克风是加分项，不是门槛。没有声音也没关系，旅程照常进行。">松弛感</button>
+                <button class="preset-chip" type="button" data-note="这一程不需要完美设备，哪怕静音，也能完整抵达结尾。">诗意版</button>
+                <button class="preset-chip" id="randomNoteBtn" type="button">换一条</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="footer-tip">
+          这是独立静态页，不走项目路由。部署后直接访问 <code>/qr-access-card.html</code> 即可使用。
+        </p>
+        <div class="actions">
+          <button class="btn-accent" id="exportCardBtn">下载票券图</button>
+          <button class="btn-main" id="downloadBtn">下载二维码</button>
+          <button class="btn-ghost" id="copyBtn">复制链接</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script>
+      const DEFAULTS = {
+        url: "https://fly.javierchen.cn",
+        title: "特别通行票 · 请查收",
+        subtitle: "那些未完待续的片段，会在这一站重逢",
+        note: "可能会临时用到麦克风，没有声音也可继续。",
+      };
+
+      const NOTE_PRESETS = [
+        "可能会临时用到麦克风，没有声音也可继续。",
+        "把环境交给安静，把注意力交给你。麦克风如果没有反应，也请继续往下。",
+        "麦克风是加分项，不是门槛。没有声音也没关系，旅程照常进行。",
+        "这一程不需要完美设备，哪怕静音，也能完整抵达结尾。",
+      ];
+
+      const STORAGE_KEY = "qr-access-card-config-v2";
+      const state = { ...DEFAULTS };
+
+      const els = {
+        ticket: document.getElementById("ticket"),
+        urlInput: document.getElementById("urlInput"),
+        titleInput: document.getElementById("titleInput"),
+        subInput: document.getElementById("subInput"),
+        noteInput: document.getElementById("noteInput"),
+        previewTitle: document.getElementById("previewTitle"),
+        previewSub: document.getElementById("previewSub"),
+        previewUrl: document.getElementById("previewUrl"),
+        previewNote: document.getElementById("previewNote"),
+        qrcode: document.getElementById("qrcode"),
+        exportCardBtn: document.getElementById("exportCardBtn"),
+        downloadBtn: document.getElementById("downloadBtn"),
+        copyBtn: document.getElementById("copyBtn"),
+      };
+
+      function hydrateFromStorage() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          const saved = JSON.parse(raw);
+          if (!saved || typeof saved !== "object") return;
+          state.url = saved.url || DEFAULTS.url;
+          state.title = saved.title || DEFAULTS.title;
+          state.subtitle = saved.subtitle || DEFAULTS.subtitle;
+          state.note = saved.note || DEFAULTS.note;
+          if (
+            state.note === "建议先打开声音，再完整看完这份回忆与祝福。" ||
+            state.note === "建议先打开声音，再完整看完这段回忆旅程。" ||
+            state.note === "可能需要麦克风，没有声音也可继续体验。"
+          ) {
+            state.note = DEFAULTS.note;
+          }
+        } catch (error) {
+          console.warn("读取缓存失败:", error);
+        }
+      }
+
+      function persist() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      function syncInputs() {
+        els.urlInput.value = state.url;
+        els.titleInput.value = state.title;
+        els.subInput.value = state.subtitle;
+        els.noteInput.value = state.note;
+      }
+
+      function renderPreview() {
+        els.previewTitle.textContent = state.title;
+        els.previewSub.textContent = state.subtitle;
+        els.previewUrl.textContent = state.url;
+        els.previewNote.textContent = state.note;
+      }
+
+      function getQRCodeSize() {
+        const w = window.innerWidth || document.documentElement.clientWidth || 1024;
+        if (w <= 390) return 196;
+        if (w <= 620) return Math.min(Math.floor(w * 0.72), 224);
+        if (w <= 920) return Math.min(Math.floor(w * 0.62), 248);
+        return 208;
+      }
+
+      function renderQRCode() {
+        const size = getQRCodeSize();
+        els.qrcode.style.width = `${size}px`;
+        els.qrcode.style.height = `${size}px`;
+        els.qrcode.innerHTML = "";
+        if (typeof QRCode === "undefined") {
+          els.qrcode.innerHTML = "<p style='color:#223f6f;font-size:12px;text-align:center;'>二维码库加载失败，请刷新重试</p>";
+          return;
+        }
+        new QRCode(els.qrcode, {
+          text: state.url,
+          width: size,
+          height: size,
+          colorDark: "#182846",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H,
+        });
+      }
+
+      function updateAll() {
+        renderPreview();
+        renderQRCode();
+        persist();
+      }
+
+      function readForm() {
+        state.url = (els.urlInput.value || "").trim() || DEFAULTS.url;
+        state.title = (els.titleInput.value || "").trim() || DEFAULTS.title;
+        state.subtitle = (els.subInput.value || "").trim() || DEFAULTS.subtitle;
+        state.note = (els.noteInput.value || "").trim() || DEFAULTS.note;
+      }
+
+      function bindInput(el) {
+        el.addEventListener("input", () => {
+          readForm();
+          updateAll();
+        });
+      }
+
+      function applyNotePreset(note) {
+        els.noteInput.value = note;
+        readForm();
+        updateAll();
+      }
+
+      function bindNotePresets() {
+        const chips = Array.from(document.querySelectorAll(".preset-chip[data-note]"));
+        chips.forEach((chip) => {
+          chip.addEventListener("click", () => {
+            const nextNote = chip.dataset.note || DEFAULTS.note;
+            applyNotePreset(nextNote);
+          });
+        });
+
+        const randomBtn = document.getElementById("randomNoteBtn");
+        if (!randomBtn) return;
+        randomBtn.addEventListener("click", () => {
+          const pool = NOTE_PRESETS.filter((note) => note !== state.note);
+          const candidate = pool[Math.floor(Math.random() * pool.length)] || DEFAULTS.note;
+          applyNotePreset(candidate);
+        });
+      }
+
+      function downloadQRCode() {
+        const canvas = els.qrcode.querySelector("canvas");
+        const image = els.qrcode.querySelector("img");
+        const link = document.createElement("a");
+        link.download = "memory-entry-qr.png";
+
+        if (canvas) {
+          link.href = canvas.toDataURL("image/png");
+        } else if (image) {
+          link.href = image.src;
+        } else {
+          return;
+        }
+
+        link.click();
+      }
+
+      async function exportTicketImage() {
+        if (typeof html2canvas === "undefined") {
+          els.exportCardBtn.textContent = "导出不可用";
+          setTimeout(() => {
+            els.exportCardBtn.textContent = "下载票券图";
+          }, 1200);
+          return;
+        }
+
+        const prevText = els.exportCardBtn.textContent;
+        els.exportCardBtn.disabled = true;
+        els.exportCardBtn.textContent = "生成中...";
+
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+        try {
+          const canvas = await html2canvas(els.ticket, {
+            backgroundColor: null,
+            scale: 2,
+            useCORS: true,
+          });
+          const link = document.createElement("a");
+          link.download = "memory-access-ticket.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+          els.exportCardBtn.textContent = "已下载";
+        } catch (error) {
+          console.error("导出票券失败:", error);
+          els.exportCardBtn.textContent = "导出失败";
+        } finally {
+          setTimeout(() => {
+            els.exportCardBtn.disabled = false;
+            els.exportCardBtn.textContent = prevText;
+          }, 1200);
+        }
+      }
+
+      async function copyUrl() {
+        try {
+          await navigator.clipboard.writeText(state.url);
+          els.copyBtn.textContent = "已复制";
+          setTimeout(() => {
+            els.copyBtn.textContent = "复制链接";
+          }, 1200);
+        } catch {
+          els.copyBtn.textContent = "复制失败";
+          setTimeout(() => {
+            els.copyBtn.textContent = "复制链接";
+          }, 1200);
+        }
+      }
+
+      hydrateFromStorage();
+      syncInputs();
+      updateAll();
+
+      bindInput(els.urlInput);
+      bindInput(els.titleInput);
+      bindInput(els.subInput);
+      bindInput(els.noteInput);
+      bindNotePresets();
+      els.exportCardBtn.addEventListener("click", exportTicketImage);
+      els.downloadBtn.addEventListener("click", downloadQRCode);
+      els.copyBtn.addEventListener("click", copyUrl);
+      window.addEventListener("resize", renderQRCode);
+    </script>
+  </body>
+</html>
