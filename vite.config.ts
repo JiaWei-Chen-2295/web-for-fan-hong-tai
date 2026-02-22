@@ -13,7 +13,6 @@ export default defineConfig(({ mode }) => {
         rollupOptions: {
           input: {
             main: path.resolve(__dirname, 'index.html'),
-            'template/airplane/index': path.resolve(__dirname, 'template/airplane/index.html'),
           },
         },
       },
