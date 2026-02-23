@@ -2,16 +2,11 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+gsap.registerPlugin(ScrollTrigger);
 
-/**
- * GSAP easing equivalents for the Framer Motion spring configs
- * originally defined in SceneLetter.tsx.
- *
- * Tuning guide:
- *   elastic.out(amplitude, period) — amplitude >1 = more overshoot, period <1 = faster oscillation
- *   back.out(overshoot) — overshoot >1 = more bounce-back
- */
+// Keep exporting gsap, ScrollTrigger and re-export useGSAP hook for components
+export { gsap, ScrollTrigger, useGSAP };
+
 export const gsapSprings = {
   flapPeek:       { duration: 1.2, ease: 'elastic.out(0.4, 0.4)' },
   flapSwing:      { duration: 1.5, ease: 'elastic.out(0.3, 0.35)' },
@@ -22,5 +17,3 @@ export const gsapSprings = {
   seal:           { duration: 0.5, ease: 'elastic.out(1, 0.4)' },
   button:         { duration: 0.3, ease: 'back.out(2)' },
 } as const;
-
-export { gsap, ScrollTrigger, useGSAP };
